@@ -3,7 +3,9 @@ import json
 import csv
 import os
 
-def generate_ekatte_csv(output_file="D:/CODE/CADASTRE/ekatte_dict.csv"):
+def generate_ekatte_csv(output_file=None):
+    if output_file is None:
+        output_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ekatte_dict.csv")
     print("-" * 50)
     print("1. Свързване с отворената база данни (GitHub)...")
     print("-" * 50)

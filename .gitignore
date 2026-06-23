@@ -1,0 +1,50 @@
+# ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+venv/
+.venv/
+env/
+
+# ===========================
+# IDE / Editors
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===========================
+# AutoCAD
+# ===========================
+*.bak
+*.dwl
+*.dwl2
+*.dmp
+*.sv$
+*.ac$
+
+# ===========================
+# Output data (downloaded ZIPs)
+# ===========================
+Изходни/
+
+# ===========================
+# User-specific input files
+# ===========================
+selected_ekatte.txt
+
+# ===========================
+# OS-specific
+# ===========================
+Thumbs.db
+.DS_Store
+desktop.ini
