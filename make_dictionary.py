@@ -1,46 +1,46 @@
-import urllib.request
 import json
 import csv
 import os
 
 def generate_ekatte_csv(output_file=None):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     if output_file is None:
-        output_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ekatte_dict.csv")
-    print("-" * 50)
-    print("1. Свързване с отворената база данни (GitHub)...")
-    print("-" * 50)
+        output_file = os.path.join(script_dir, "ekatte_dict.csv")
     
-    url = "https://raw.githubusercontent.com/Kostadin/Places-in-Bulgaria/master/Places-in-Bulgaria.json"
+    json_file = os.path.join(script_dir, "ek_atte.json")
+    
+    print("-" * 50)
+    print("1. Зареждане на локалния файл ek_atte.json...")
+    print("-" * 50)
     
     try:
-        # Изтегляне на данните
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            data = json.loads(response.read().decode('utf-8'))
-            
-        print("2. Данните са изтеглени! Започва форматиране...")
-            
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
         csv_rows = []
-        # Обхождане на JSON дървото и извличане на нужните 4 параметъра
-        for oblast, obshtini in data.items():
-            for obshtina, places in obshtini.items():
-                for ekatte, details in places.items():
-                    name = details.get('name', '')
-                    ptype = details.get('type', '')
-                    
-                    # Сглобяване на името (напр. "гр. Габрово")
-                    full_name = f"{ptype} {name}".strip()
-                    
-                    # Добавяне на реда: ЕКАТТЕ, Област, Община, Име
-                    csv_rows.append([ekatte, oblast, obshtina, full_name])
+        for place in data:
+            ekatte = place.get("ekatte")
+            if not ekatte:
+                continue
+                
+            # Изчистване на "обл. " и "общ. " от имената
+            oblast = place.get("oblast_name", "").replace("обл. ", "").replace("Област ", "").strip()
+            obshtina = place.get("obshtina_name", "").replace("общ. ", "").replace("Община ", "").strip()
+            
+            # Съставяне на пълното име: тип (гр./с./к.) + име
+            ptype = place.get("t_v_m", "")
+            name = place.get("name", "")
+            full_name = f"{ptype} {name}".strip()
+            
+            csv_rows.append([ekatte, oblast, obshtina, full_name])
                     
         # Сортиране по ЕКАТТЕ код за по-прегледно
-        csv_rows.sort(key=lambda x: x[0])
+        csv_rows.sort(key=lambda x: str(x[0]))
         
-        print("3. Записване на CSV файла...")
+        print("2. Записване на CSV файла...")
         
-        # Записваме във формат UTF-8, за да няма йероглифи
-        with open(output_file, "w", encoding="utf-8", newline="") as f:
+        # Записваме във формат UTF-8-SIG, за да може Excel/CAD да го чете правилно
+        with open(output_file, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.writer(f)
             for row in csv_rows:
                 writer.writerow(row)
@@ -54,4 +54,5 @@ def generate_ekatte_csv(output_file=None):
         print(f"[X] Възникна грешка при създаването: {e}")
 
 # Стартиране на процеса
-generate_ekatte_csv()
+if __name__ == '__main__':
+    generate_ekatte_csv()
