@@ -52,6 +52,7 @@ def run_automation():
     print(f"Започва автоматично изтегляне на {len(ekatte_list)} землища...")
 
     # 3. Основен цикъл за теглене
+    unique_obshtini = set()
     for ekatte in ekatte_list:
         if ekatte not in ekatte_map:
             print(f"[!] ЕКАТТЕ {ekatte} не съществува в речника. Пропуска се.")
@@ -61,16 +62,19 @@ def run_automation():
         obshtina = ekatte_map[ekatte]["obshtina"]
         name = ekatte_map[ekatte]["name"]
         
-        zemlishte_full = f"{name} ({ekatte})"
-        location_folder = os.path.join(main_folder, zemlishte_full.replace('/', '_').replace('\\', '_'))
+        unique_obshtini.add(obshtina)
+        
+        zemlishte_server = f"{name} ({ekatte})"
+        zemlishte_folder = f"общ. {obshtina} - {name} ({ekatte})"
+        location_folder = os.path.join(main_folder, zemlishte_folder.replace('/', '_').replace('\\', '_'))
         
         if not os.path.exists(location_folder): 
             os.makedirs(location_folder)
 
-        print(f"\n--- Изтегляне за: {zemlishte_full} ---")
+        print(f"\n--- Изтегляне за: {zemlishte_folder} ---")
 
         for file_type in target_files:
-            server_path = f"област {oblast}/община {obshtina}/{zemlishte_full}/{file_type}"
+            server_path = f"област {oblast}/община {obshtina}/{zemlishte_server}/{file_type}"
             params = {'path': server_path}
             clean_name = f"{ekatte}_{file_type.replace(' ', '_')}"
             
@@ -84,6 +88,10 @@ def run_automation():
                     print(f"  [X] Не е намерен на сървъра: {file_type}")
             except Exception as e:
                 print(f"  [!] Проблем с мрежата: {e}")
+
+    if unique_obshtini:
+        obshtini_list = ", ".join([f"общ. {o}" for o in sorted(unique_obshtini)])
+        print(f"\n[i] Трасето попада в следните общини: {obshtini_list}")
 
 if __name__ == "__main__":
     run_automation()

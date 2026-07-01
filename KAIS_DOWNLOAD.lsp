@@ -4,7 +4,7 @@
 ;;; ==========================================================================
 
 ;; ---> НАСТРОЙКА: ПЪТЯТ ДО ПАПКАТА С ПРОГРАМАТА (КЪДЕТО Е Python СКРИПТЪТ) <---
-(setq *KAIS_DIR* "C:\\CADSTRE\\")
+(setq *KAIS_DIR* "C:\\CAD\\")
 
 (defun c:ekate ( / ss i e txt len ch i2 numStr resList f dwgDir inputPath scriptPath batPath fBat c WshShell)
   (vl-load-com)
